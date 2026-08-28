@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ăn Dặm Cùng Con</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF6EC; --sage:#E7EFDD; --sage-dark:#5B7A52; --leaf:#3F5C38;
+    --peach:#F6B896; --peach-dark:#B05A2E; --pink:#F3D6DD; --pink-dark:#A6486A;
+    --card:#FFFFFF; --ink:#33352E; --ink-soft:#6B6E63; --line:#E4DECE;
+    --good:#5B8C5A; --good-bg:#E8F3E4; --warn:#C98A2E; --warn-bg:#FBF0DC;
+    --change:#B0522F; --change-bg:#FCE9DF;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:'Nunito',sans-serif;-webkit-font-smoothing:antialiased;padding-bottom:60px;}
+  h1,h2,h3,.brand{font-family:'Baloo 2',cursive;}
+  header{background:linear-gradient(180deg,var(--sage) 0%, var(--cream) 100%);padding:24px 16px 16px;text-align:center;border-bottom:2px dashed var(--sage-dark);}
+  header h1{margin:0 0 4px;font-size:23px;color:var(--leaf);}
+  header p{margin:0;color:var(--ink-soft);font-size:13px;}
+  .container{max-width:980px;margin:0 auto;padding:0 12px;}
+  nav.tabs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:14px 0 6px;position:sticky;top:0;background:var(--cream);z-index:10;}
+  nav.tabs button{font-family:'Nunito',sans-serif;font-weight:700;font-size:12.5px;padding:7px 12px;border-radius:999px;border:1.5px solid var(--sage-dark);background:var(--card);color:var(--leaf);cursor:pointer;}
+  nav.tabs button.active{background:var(--sage-dark);color:#fff;border-color:var(--sage-dark);}
+  .panel{display:none;padding:16px 0 30px;}
+  .panel.active{display:block;}
+  .card{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;}
+  .card h2{margin:0 0 10px;font-size:18px;color:var(--leaf);}
+  .card h3{margin:14px 0 8px;font-size:15px;color:var(--peach-dark);}
+  .card p{margin:0 0 8px;font-size:14.5px;line-height:1.6;}
+  .card ul{margin:0 0 8px;padding-left:20px;}
+  .card li{font-size:14.5px;line-height:1.65;margin-bottom:4px;}
+  .verdict-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:6px;}
+  .verdict{border-radius:14px;padding:12px;background:var(--good-bg);border:1.5px solid var(--good);}
+  .verdict.warn{background:var(--warn-bg);border-color:var(--warn);}
+  .verdict .label{font-size:11px;font-weight:700;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.03em;}
+  .verdict .value{font-family:'Baloo 2';font-size:15px;margin-top:2px;color:var(--leaf);}
+  .verdict.warn .value{color:var(--warn);}
+  table.mini{width:100%;border-collapse:collapse;margin:8px 0 14px;font-size:12.5px;}
+  table.mini th,table.mini td{border:1px solid var(--line);padding:6px 7px;text-align:left;}
+  table.mini th{background:var(--sage);color:var(--leaf);font-family:'Baloo 2';font-weight:600;}
+  .week{border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px;background:#fffdf8;}
+  .week .wk-title{font-family:'Baloo 2';font-size:14.5px;color:var(--leaf);margin-bottom:4px;}
+  .week .wk-ratio{display:inline-block;background:var(--pink);color:var(--pink-dark);font-weight:700;font-size:12px;padding:2px 9px;border-radius:999px;margin-bottom:6px;}
+  .week p{margin:0;font-size:13.5px;}
+
+  .cal-title{background:var(--sage-dark);color:#fff;border-radius:12px 12px 0 0;padding:10px 14px;font-family:'Baloo 2';font-size:15px;}
+  .cal-title span{font-weight:400;font-size:12.5px;opacity:.9;display:block;margin-top:1px;}
+  .cal-hint{font-size:11.5px;color:var(--ink-soft);padding:6px 2px 10px;}
+  .legend{display:flex;gap:14px;font-size:11.5px;color:var(--ink-soft);margin-bottom:8px;flex-wrap:wrap;}
+  .legend span{display:flex;align-items:center;gap:5px;}
+  .dot{width:9px;height:9px;border-radius:50%;display:inline-block;}
+  .dot.g{background:var(--sage-dark);}
+  .dot.c{background:var(--change);}
+  .cal-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1.5px solid var(--line);border-top:none;border-radius:0 0 12px 12px;background:#fff;padding:8px;}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,133px);gap:5px;min-width:951px;}
+  .cal-head{background:var(--sage);color:var(--leaf);text-align:center;font-weight:700;padding:5px 0;border-radius:6px;font-size:11.5px;}
+  .cal-cell{background:#FDFBF5;border:1px solid var(--line);border-radius:8px;padding:6px 7px;min-height:98px;font-size:10.5px;line-height:1.4;}
+  .cal-cell.multi{min-height:150px;}
+  .cal-cell.empty{background:transparent;border:none;min-height:40px;}
+  .cal-cell .dnum{font-weight:700;color:var(--leaf);font-size:11px;}
+  .cal-cell .cratio{float:right;font-size:9px;color:var(--peach-dark);font-weight:700;}
+  .cal-cell .cfood{font-weight:700;margin-top:3px;color:var(--ink);}
+  .cal-cell .cmeta{color:var(--ink-soft);font-size:9.5px;margin-top:3px;}
+  .cal-cell .cfat{margin-top:4px;font-size:9.5px;font-weight:700;padding:2px 5px;border-radius:5px;background:var(--sage);color:var(--leaf);display:inline-block;}
+  .cal-cell.changed{border-color:var(--change);border-width:1.5px;}
+  .cal-cell.changed .cfat{background:var(--change-bg);color:var(--change);}
+  .cal-cell .cnote{color:var(--change);font-size:9px;font-style:italic;margin-top:3px;}
+  .cal-cell .meal-lbl{font-size:9px;color:var(--pink-dark);font-weight:700;margin-top:2px;}
+  .cal-cell .meal-sep{border-top:1px dashed var(--line);margin:6px 0 2px;}
+  .foot{text-align:center;font-size:12px;color:var(--ink-soft);padding:20px 20px 0;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1 class="brand">🍼 Ăn Dặm Cùng Con</h1>
+  <p>Lịch dạng bảng như file gốc — vuốt ngang để xem đủ 7 ngày, đã gộp dầu/mỡ chỉnh sửa</p>
+</header>
+
+<div class="container">
+  <nav class="tabs" id="tabs">
+    <button data-t="tongquan" class="active">Tổng quan</button>
+    <button data-t="thoigian">Thời gian biểu</button>
+    <button data-t="tangtho">Tăng thô theo tuần</button>
+    <button data-t="luuy">Lưu ý thêm</button>
+    <button data-t="t8">T8</button>
+    <button data-t="t9">T9</button>
+    <button data-t="t10">T10</button>
+    <button data-t="t11">T11</button>
+    <button data-t="t12">T12</button>
+  </nav>
+
+  <div class="panel active" id="tongquan">
+    <div class="card">
+      <h2>Đánh giá chung</h2>
+      <div class="verdict-grid">
+        <div class="verdict"><div class="label">Thực đơn</div><div class="value">Khá tốt</div></div>
+        <div class="verdict"><div class="label">Tăng thô</div><div class="value">Hợp lý</div></div>
+        <div class="verdict"><div class="label">Lượng dầu</div><div class="value">Giữ nguyên</div></div>
+        <div class="verdict warn"><div class="label">Cần bổ sung</div><div class="value">4 điểm</div></div>
+      </div>
+      <p>File này gộp toàn bộ lịch gốc (dạng bảng theo tuần, giống file PowerPoint của mẹ) cùng phần dầu/mỡ đã chỉnh theo nguyên tắc kỵ thực phẩm — mở đúng 1 file, vuốt ngang mỗi bảng tháng để xem đủ 7 ngày trong tuần.</p>
+    </div>
+    <div class="card">
+      <h2>Về lượng dầu ăn dặm</h2>
+      <p><b>Không cần tăng thêm dầu mỗi tháng từ 7,5 tháng trở đi.</b> Lịch hiện tại: 1ml (6 tháng) → 2,5ml (6,5–7 tháng) → 5ml (7,5 tháng trở đi, giữ nguyên đến hết 10 tháng) đúng chuẩn khuyến nghị phổ biến.</p>
+      <table class="mini">
+        <tr><th>Giai đoạn</th><th>Số bữa/ngày</th><th>Dầu/bữa</th><th>Tổng/ngày</th></tr>
+        <tr><td>6 tháng</td><td>1</td><td>1ml</td><td>~1ml</td></tr>
+        <tr><td>6,5–7 tháng</td><td>1–2</td><td>2,5–5ml</td><td>~2,5–5ml</td></tr>
+        <tr><td>7,5–9 tháng</td><td>2</td><td>5ml</td><td>~10ml</td></tr>
+        <tr><td>9,5–10 tháng</td><td>3</td><td>5ml</td><td>~15ml</td></tr>
+      </table>
+      <p>Mốc cần nhớ: gần 12 tháng có thể nâng lên 7,5–10ml/bữa khi bé ăn cơm mềm gần giống người lớn.</p>
+    </div>
+    <div class="card">
+      <h2>4 điểm nên bổ sung</h2>
+      <h3>1. Số bữa chính vs số món trong bảng</h3>
+      <p>Thời gian biểu có 2–3 bữa chính/ngày từ 7,5 tháng, nhưng bảng chỉ liệt kê 1 món/ngày — mẹ cần làm rõ món này dùng cho mấy bữa để tính đúng tổng dầu/ngày.</p>
+      <h3>2. Sữa mẹ/công thức song song</h3>
+      <p>Vẫn cần duy trì 500–700ml sữa/ngày xuyên suốt giai đoạn ăn dặm.</p>
+      <h3>3. Không mật ong / muối / đường</h3>
+      <p>Mẹ đã làm đúng — giữ nguyên tắc này đến hết 12 tháng.</p>
+      <h3>4. Theo dõi dị ứng món mới</h3>
+      <p>Với món dễ dị ứng lần đầu (tôm, cua, trứng, cá biển), theo dõi phản ứng 2–3 ngày sau lần ăn đầu tiên.</p>
+    </div>
+  </div>
+
+  <div class="panel" id="thoigian">
+    <div class="card">
+      <h2>Thời gian biểu & lượng nước theo tháng</h2>
+      <p>Lượng nước dưới đây là <b>nước lọc bổ sung ngoài sữa</b> (không tính sữa mẹ/công thức), tổng hợp theo khuyến nghị phổ biến (WHO/Vinmec: trẻ 6-12 tháng cần khoảng 100-300ml nước/ngày tùy giai đoạn, tăng dần theo số bữa ăn dặm). Đây là mức ước tính chung, có thể thay đổi theo cân nặng và thời tiết — không cho uống nước ngay trước/trong bữa ăn để tránh bé no giả.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">6 tháng — mới bắt đầu ăn dặm</h3>
+      <table class="mini">
+        <tr><th>Giờ</th><th>Hoạt động</th></tr>
+        <tr><td>10:30</td><td>Ăn dặm (1 bữa)</td></tr>
+        <tr><td>11:00</td><td>Uống vài ngụm nước</td></tr>
+      </table>
+      <p><b>Lượng nước/ngày: ~30-60ml</b> (vài thìa/ngụm sau bữa ăn, chủ yếu để tráng miệng, chưa cần uống nhiều vì sữa vẫn là nguồn nước chính).</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">6,5-7 tháng</h3>
+      <table class="mini">
+        <tr><th>Giờ</th><th>Hoạt động</th></tr>
+        <tr><td>10:30</td><td>Ăn dặm</td></tr>
+        <tr><td>11:00</td><td>Uống nước</td></tr>
+        <tr><td>16:00</td><td>Trái cây nghiền</td></tr>
+      </table>
+      <p><b>Lượng nước/ngày: ~60-90ml</b>.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">7,5-8 tháng</h3>
+      <table class="mini">
+        <tr><th>Giờ</th><th>Hoạt động</th></tr>
+        <tr><td>10:00</td><td>Ăn dặm bữa chính</td></tr>
+        <tr><td>10:30</td><td>Uống nước</td></tr>
+        <tr><td>14:30</td><td>Trái cây + Ăn bốc</td></tr>
+        <tr><td>18:00</td><td>Bữa chính thứ 2</td></tr>
+        <tr><td>19:00</td><td>Uống nước</td></tr>
+      </table>
+      <p><b>Lượng nước/ngày: ~90-120ml</b> (chia 2 lần sau mỗi bữa chính).</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">8,5-9 tháng</h3>
+      <table class="mini">
+        <tr><th>Giờ</th><th>Hoạt động</th></tr>
+        <tr><td>08:30</td><td>Ăn trái cây</td></tr>
+        <tr><td>10:30</td><td>Bữa chính</td></tr>
+        <tr><td>11:00</td><td>Uống nước</td></tr>
+        <tr><td>15:00</td><td>Bữa chính</td></tr>
+        <tr><td>15:30</td><td>Ăn bốc</td></tr>
+      </table>
+      <p><b>Lượng nước/ngày: ~120-150ml</b>.</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">9,5-10 tháng</h3>
+      <table class="mini">
+        <tr><th>Giờ</th><th>Hoạt động</th></tr>
+        <tr><td>08:30</td><td>Ăn trái cây</td></tr>
+        <tr><td>10:00</td><td>Bữa chính</td></tr>
+        <tr><td>10:30</td><td>Uống nước</td></tr>
+        <tr><td>14:30</td><td>Ăn bốc</td></tr>
+        <tr><td>15:30</td><td>Bữa chính</td></tr>
+        <tr><td>19:00</td><td>Bữa tối</td></tr>
+      </table>
+      <p><b>Lượng nước/ngày: ~150-200ml</b> (có thể tới 200-240ml khi bé ăn đủ 3 bữa/ngày).</p>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">Cách tính chính xác hơn (nếu muốn)</h3>
+      <p>Công thức tham khảo: <b>~100ml nước/kg cân nặng/ngày (đã tính cả sữa)</b>. Ví dụ bé 8kg cần tổng ~800ml nước/ngày; nếu bé bú khoảng 600ml sữa thì chỉ cần bổ sung thêm ~200ml nước lọc. Trừ ngược lượng sữa bé bú thực tế ra sẽ chính xác hơn bảng ước tính chung ở trên.</p>
+    </div>
+  </div>
+
+  <div class="panel" id="tangtho">
+    <div class="card">
+      <h2>Tăng thô theo tuần (từ file gốc)</h2>
+      <p>Bảng tỉ lệ cháo/độ thô chi tiết theo từng tuần — giữ nguyên vì đã đúng chuẩn.</p>
+    </div>
+    <div class="card">
+      <h2>06 tháng — Học nuốt</h2>
+      <div class="week"><div class="wk-title">Tuần 1</div><div class="wk-ratio">Cháo 1:10</div><p>Rây mịn hoàn toàn; rau củ rây; đạm rây/xay mịn.</p></div>
+      <div class="week"><div class="wk-title">Tuần 2</div><div class="wk-ratio">Cháo 1:10</div><p>Giảm rây mịn (có thể còn vài hạt lợn cợn nếu bé ăn tốt).</p></div>
+      <div class="week"><div class="wk-title">Tuần 3</div><div class="wk-ratio">Cháo 1:8</div><p>70% rây + 30% tán bằng muỗng.</p></div>
+      <div class="week"><div class="wk-title">Tuần 4</div><div class="wk-ratio">Cháo 1:8</div><p>Không rây, chỉ tán bằng muỗng.</p></div>
+    </div>
+    <div class="card">
+      <h2>07 tháng — Học nghiền</h2>
+      <div class="week"><div class="wk-title">Tuần đầu</div><div class="wk-ratio">Cháo 1:7</div><p>Tán bằng muỗng.</p></div>
+      <div class="week"><div class="wk-title">Tuần 2</div><div class="wk-ratio">Cháo 1:7</div><p>Để lại vài hạt gạo vỡ.</p></div>
+      <div class="week"><div class="wk-title">Tuần 3</div><div class="wk-ratio">Cháo 1:7</div><p>Hạt gạo 30–50%.</p></div>
+      <div class="week"><div class="wk-title">Tuần 4</div><div class="wk-ratio">Cháo 1:6</div><p>Hạt gạo gần như nguyên nhưng rất mềm.</p></div>
+      <p style="margin-top:6px;color:var(--ink-soft);font-size:12.5px;">Lưu ý gốc: rau củ nghiền bằng nĩa thay vì xay nhuyễn.</p>
+    </div>
+    <div class="card">
+      <h2>08 tháng — Học nhai</h2>
+      <div class="week"><div class="wk-title">Tuần 1–2</div><div class="wk-ratio">Cháo 1:5</div><p>Hạt gạo nguyên mềm; rau củ cắt 3–5mm; thịt băm.</p></div>
+      <div class="week"><div class="wk-title">Tuần 3–4</div><div class="wk-ratio">Cháo nguyên hạt mềm</div><p>Tập ăn bốc mỗi ngày với thức ăn mềm.</p></div>
+    </div>
+    <div class="card">
+      <h2>09 tháng — Tập cơm</h2>
+      <div class="week"><div class="wk-title">Cả tháng</div><div class="wk-ratio">Cháo rất đặc / cơm nát</div><p>Rau củ khoảng 5–7mm; thịt cắt nhỏ.</p></div>
+    </div>
+    <div class="card">
+      <h2>10–12 tháng</h2>
+      <div class="week"><div class="wk-title">Cả giai đoạn</div><div class="wk-ratio">Cơm nát → cơm mềm</div><p>Bé ăn gần giống gia đình (không nêm mặn).</p></div>
+    </div>
+    <div class="card">
+      <h2>3 điều nên bổ sung thêm</h2>
+      <h3>1. Linh hoạt theo phản ứng của bé</h3>
+      <p>Nếu bé còn nôn ói với hạt to hơn dự kiến, lùi lại tỉ lệ cũ vài ngày thay vì ép đúng lịch tuần.</p>
+      <h3>2. Mốc tập cầm muỗng & uống ly</h3>
+      <p>8–9 tháng: tập cầm muỗng tự xúc. 9–10 tháng: tập uống bằng ly/cốc thay vì chỉ bình hút.</p>
+      <h3>3. Kích thước miếng ăn bốc</h3>
+      <p>8 tháng: miếng to cỡ ngón tay người lớn (5–6cm). 10 tháng: cắt nhỏ 1–2cm khi bé dùng được ngón cái–trỏ.</p>
+    </div>
+  </div>
+
+  <div class="panel" id="luuy">
+    <div class="card">
+      <h2>Những lưu ý an toàn quan trọng</h2>
+      <ul>
+        <li><b>Không mật ong</b> dưới 12 tháng tuổi.</li>
+        <li><b>Không muối, không đường, không nêm nếm</b> đến 12 tháng.</li>
+        <li><b>Luôn giám sát</b> khi bé ăn, đặc biệt giai đoạn ăn bốc/hạt nguyên.</li>
+        <li><b>Món mới đầu tiên (6 tháng):</b> thử 3 ngày liên tục trước khi đổi món.</li>
+        <li><b>Món dễ dị ứng</b> (trứng, tôm, cua, cá biển): theo dõi 2–3 ngày sau lần đầu.</li>
+        <li><b>Dầu gấc</b> (nếu thêm sau này): chỉ 2–3 lần/tuần, tránh thừa vitamin A.</li>
+        <li><b>Dầu hạt lanh:</b> không nấu chín, chỉ thêm sau khi tắt bếp; dùng liên tục tối đa 3 tháng.</li>
+        <li><b>Sữa mẹ/công thức</b> vẫn là nguồn chính, duy trì 500–700ml/ngày song song ăn dặm.</li>
+      </ul>
+      <p style="margin-top:10px;color:var(--ink-soft);font-size:13px;">Đây là nguyên tắc dinh dưỡng phổ biến, không thay thế tư vấn bác sĩ nhi khoa.</p>
+    </div>
+  </div>
+
+  <div class="panel" id="t8"></div>
+  <div class="panel" id="t9"></div>
+  <div class="panel" id="t10"></div>
+  <div class="panel" id="t11"></div>
+  <div class="panel" id="t12"></div>
+</div>
+
+<p class="foot">Bốc = món ăn bốc · Tc = tráng miệng · TL = tổng lượng cháo/cơm mỗi bữa · nền cam = ngày đã chỉnh dầu/mỡ<br>1-14/8: bé chưa ăn dặm · 31/8 và các bữa "Bữa 2/Bữa tối" từ T10 trở đi là do mình đề xuất thêm để nối tiếp mượt file gốc</p>
+
+<script>
+const DOW = ["SUN","MON","TUE","WED","THU","FRI","SAT"];
+
+const monthDefs = {
+  t8: {
+    label: "THÁNG 8 · THỰC ĐƠN ĂN DẶM 6 THÁNG", sub:"15/8 = ngày 1 chính thức ăn dặm (Cháo 1:10 rây) · 1-14/8 chưa ăn dặm", firstDow:6, numDays:31,
+    days: {
+      15:{food:"Cháo rây trắng",tl:"20ml",fat:"Chưa dùng dầu"},
+      16:{food:"Cháo rây trắng",tl:"20ml",fat:"Chưa dùng dầu"},
+      17:{food:"Cháo rây trắng",tl:"20ml",fat:"Chưa dùng dầu"},
+      18:{food:"Cháo rây trắng",tl:"30ml",fat:"Chưa dùng dầu"},
+      19:{food:"Cháo rây trắng",tl:"30ml",fat:"Chưa dùng dầu"},
+      20:{food:"Cháo rây trắng",tl:"30ml",fat:"Chưa dùng dầu"},
+      21:{food:"Cà rốt 10g",tl:"30ml",fat:"Dầu 1ml"},
+      22:{food:"Khoai lang 15g + Sữa 20-30ml",tl:"40ml",fat:"Dầu 1ml"},
+      23:{food:"Khoai tây 15g + Dashi 20ml",tl:"40ml",fat:"Dầu 1ml"},
+      24:{food:"Súp lơ trắng 10g",tl:"40ml",fat:"Dầu 1ml"},
+      25:{food:"Su su 10g",tl:"40ml",fat:"Dầu 1ml"},
+      26:{food:"Rau cải 10g",tl:"50ml",fat:"Dầu 1ml"},
+      27:{food:"Cải bó xôi 10g",tl:"50ml",fat:"Dầu 1ml"},
+      28:{food:"Bí đỏ 15g + Sữa",tl:"50ml",fat:"Dầu olive 1ml"},
+      29:{food:"Đậu hũ 15g + Cà rốt 10g",ratio:"1:8",tl:"50ml",fat:"Dầu óc chó 1ml"},
+      30:{food:"Củ cải trắng 10g + Rau dền 10g",ratio:"1:8",tl:"50ml",fat:"Dầu cá hồi 1ml"},
+      31:{food:"Bí xanh 10g + Cà rốt 10g",ratio:"1:8",tl:"55ml",fat:"Dầu olive 1ml"}
+    }
+  },
+  t9: {
+    label:"THÁNG 9 · THỰC ĐƠN ĂN DẶM 6,5-7 THÁNG", sub:"Cháo 1:8 → 1:7 · dầu 2,5-5ml · 5 ngày đã chỉnh", firstDow:2, numDays:30,
+    days:{
+      1:{food:"Cà rốt 10g + Hạt sen 10g",ratio:"1:8",tl:"60ml",tc:"Táo hấp nghiền",fat:"2,5ml Dầu cá hồi"},
+      2:{food:"Ngô ngọt 15g + Dashi 20ml",ratio:"1:8",tl:"60ml",tc:"Chuối nghiền",boc:"Khoai lang hấp",fat:"2,5ml Dầu olive"},
+      3:{food:"Đậu hũ 20g + Cải bó xôi",ratio:"1:8",tl:"60ml",tc:"Lê hấp nghiền",fat:"2,5ml Dầu óc chó"},
+      4:{food:"Đậu hũ 20g + Cà rốt 10g",ratio:"1:8",tl:"60ml",tc:"Bơ nghiền",boc:"Bí đỏ hấp",fat:"2,5ml Dầu cá hồi"},
+      5:{food:"Heo 15g + Khoai lang + Bông cải",ratio:"1:8",tl:"70ml",tc:"Đu đủ nghiền",fat:"2,5ml Dầu olive"},
+      6:{food:"Thịt heo 15g + Mướp hương 15g",ratio:"1:8",tl:"70ml",tc:"Chuối",boc:"Cà rốt hấp",fat:"2,5ml Dầu óc chó"},
+      7:{food:"Thịt gà 15g + Măng tây 10g",ratio:"1:8",tl:"70ml",tc:"Xoài chín nghiền",fat:"2,5ml Dầu cá hồi"},
+      8:{food:"Gà 15g + Bí đỏ + Hạt sen 10g",ratio:"1:8",tl:"70ml",tc:"Thanh long",boc:"Khoai lang",fat:"2,5ml Dầu óc chó",note:"Olive kỵ hạt sen",changed:true},
+      9:{food:"Ức gà 15g + Cà rốt + Khoai tây",ratio:"1:8",tl:"80ml",tc:"Lê",boc:"Bông cải xanh",fat:"2,5ml Dầu óc chó"},
+      10:{food:"Thịt gà 15g + Hạt sen 10g",ratio:"1:8",tl:"80ml",tc:"Táo hấp",fat:"2,5ml Dầu cá hồi"},
+      11:{food:"Cá lóc 15g + Cà rốt 10g",ratio:"1:8",tl:"80ml",tc:"Bơ",boc:"Bí đỏ hấp",fat:"2,5ml Dầu olive"},
+      12:{food:"Cá lóc 15g + Khoai tây 10g",ratio:"1:8",tl:"80ml",tc:"Đu đủ",fat:"5ml Dầu óc chó"},
+      13:{food:"Cá lóc 15g + Rau ngót 15g",ratio:"1:7",tl:"90ml",tc:"Chuối",boc:"Bánh gạo ăn dặm",fat:"5ml Dầu cá hồi"},
+      14:{food:"Cá lóc 15g + Bầu 15g",ratio:"1:7",tl:"90ml",tc:"Lê",boc:"Khoai lang hấp",fat:"5ml Dầu olive"},
+      15:{food:"Cá basa 15g + Bí xanh 15g",ratio:"1:7",tl:"90ml",tc:"Thanh Long",boc:"Bơ cắt thanh",fat:"5ml Dầu óc chó"},
+      16:{food:"Cá basa 15g + Susu 15g",ratio:"1:7",tl:"90ml",tc:"Táo hấp",boc:"Bí đỏ hấp",fat:"5ml Dầu cá hồi"},
+      17:{food:"Cá diêu hồng 15g + Bí đỏ 15g",ratio:"1:7",tl:"100ml",tc:"Đu đủ",boc:"Cà rốt hấp",fat:"2,5ml mỡ gà + 2,5ml dầu"},
+      18:{food:"Lòng đỏ trứng (1/4) + Rau ngót",ratio:"1:7",tl:"100ml",tc:"Xoài",fat:"5ml Dầu óc chó"},
+      19:{food:"Thịt bò 10g + Cà rốt + Phô mai",ratio:"1:7",tl:"100ml",tc:"Chuối",boc:"Bông cải xanh hấp",fat:"5ml Dầu óc chó",note:"Cá hồi kỵ bò và phô mai",changed:true},
+      20:{food:"Thịt bò 15g + Súp lơ xanh",ratio:"1:7",tl:"100ml",tc:"Bơ",boc:"Bánh gạo ăn dặm",fat:"2,5ml mỡ heo + 2,5ml dầu óc chó",note:"Có bò → dầu là óc chó",changed:true},
+      21:{food:"Thịt bò 15g + Cải ngọt 20g",ratio:"1:7",tl:"110ml",tc:"Lê",boc:"KL hấp",fat:"5ml Dầu óc chó"},
+      22:{food:"Lòng đỏ trứng gà (1/2)",ratio:"1:7",tl:"110ml",tc:"Thanh long",boc:"Bí đỏ hấp",fat:"5ml Dầu cá hồi"},
+      23:{food:"Ngô 20g + Lòng đỏ trứng (1)",ratio:"1:7",tl:"110ml",tc:"Chuối",boc:"Cà rốt hấp",fat:"5ml Dầu olive"},
+      24:{food:"Cá lóc 20g + Bầu 20g",ratio:"1:7",tl:"110ml",tc:"Táo hấp",boc:"Bông cải xanh hấp",fat:"2,5ml mỡ heo + 2,5ml dầu"},
+      25:{food:"Cá hồi 15g + Bông cải 15g",ratio:"1:7",tl:"120ml",tc:"Táo hấp",boc:"Bơ cắt thanh",fat:"5ml Dầu cá hồi"},
+      26:{food:"Yến mạch + Bò 15g + Bí đỏ",ratio:"1:7",tl:"120ml",tc:"Xoài",boc:"Khoai lang hấp",fat:"5ml Dầu óc chó",note:"Olive kỵ bò",changed:true},
+      27:{food:"Yến mạch + Gà 20g + Susu + Củ cải trắng",ratio:"1:7",fat:"2,5ml mỡ gà + 2,5ml dầu"},
+      28:{food:"Cà chua + Bí + Khoai tây",ratio:"1:7",fat:"5ml Dầu cá hồi"},
+      29:{food:"Cà rốt 15g + Hạt sen 5g",ratio:"1:7",fat:"5ml Dầu óc chó",note:"Olive kỵ hạt",changed:true},
+      30:{food:"Cá hồi 15g",ratio:"1:7",fat:"5ml Dầu óc chó"}
+    }
+  },
+  t10: {
+    label:"THÁNG 10 · THỰC ĐƠN ĂN DẶM 7,5-8 THÁNG", sub:"Cháo 1:7 → 1:5 · dầu 5ml · 6 ngày đã chỉnh · 2 bữa chính/ngày", firstDow:4, numDays:31,
+    meals2:{time1:"10:00",time2:"18:00",portion:"20g"},
+    days:{
+      1:{food:"Thịt heo 20g + Bí đỏ 20g",ratio:"1:7",tl:"130ml",tc:"Táo hấp",boc:"Bí đỏ hấp",fat:"5ml Dầu cá hồi"},
+      2:{food:"Cá lóc 20g + Rau ngót 20g",ratio:"1:7",tl:"130ml",tc:"Đu đủ",boc:"Khoai lang hấp",fat:"2,5ml mỡ heo + 2,5ml dầu"},
+      3:{food:"Gà 20g + Măng tây 20g",ratio:"1:7",tl:"130ml",tc:"Thanh long",boc:"Cà rốt hấp",fat:"5ml Dầu óc chó"},
+      4:{food:"Bò 20g + Cà rốt 20g",ratio:"1:6",tl:"140ml",tc:"Dưa lưới",boc:"Cà rốt hấp",fat:"5ml Dầu óc chó",note:"Cá hồi kỵ bò",changed:true},
+      5:{food:"Cá basa 20g + Bí xanh 20g",ratio:"1:6",tl:"140ml",tc:"Chuối",boc:"Khoai lang hấp",fat:"5ml Dầu olive"},
+      6:{food:"Đậu hũ 20g + Cải bó xôi",ratio:"1:6",tl:"140ml",tc:"Bơ/Xoài",boc:"Bí đỏ hấp",fat:"2,5ml mỡ heo + 2,5ml dầu"},
+      7:{food:"Tôm 20g + Rau dền 20g",ratio:"1:6",tl:"140ml",tc:"Lê",fat:"5ml Dầu cá hồi"},
+      8:{food:"Cua 20g + Bí đỏ 20g",ratio:"1:6",tl:"150ml",tc:"Táo hấp",boc:"Bí đỏ hấp",fat:"5ml Dầu olive"},
+      9:{food:"Cá hồi 20g + Bông cải xanh",ratio:"1:6",tl:"150ml",tc:"Đu đủ",boc:"Bông cải hấp",fat:"2,5ml mỡ gà + 2,5ml dầu"},
+      10:{food:"Thịt heo 20g + Cải ngọt 20g",ratio:"1:6",tl:"150ml",tc:"Thanh Long",boc:"Khoai lang hấp",fat:"5ml Dầu cá hồi"},
+      11:{food:"Bò 20g + Rau dền 20g",ratio:"1:5",tl:"150ml",tc:"Dưa lưới",boc:"Bánh gạo ăn dặm",fat:"5ml Dầu óc chó",note:"Olive kỵ bò",changed:true},
+      12:{food:"Gà 20g + Bí 20g",ratio:"1:5",tl:"160ml",tc:"Chuối",boc:"Khoai lang hấp",fat:"5ml Dầu óc chó"},
+      13:{food:"Cá diêu hồng 20g + Cải ngọt",ratio:"1:5",tl:"160ml",tc:"Bơ/Xoài",boc:"Súp lơ hấp",fat:"2,5ml mỡ heo + 2,5ml dầu",note:"Mỡ gà kỵ rau cải",changed:true},
+      14:{food:"Yến mạch + Bò 20g + Bí đỏ",ratio:"1:5",tl:"160ml",tc:"Lê",boc:"Bí đỏ hấp",fat:"5ml Dầu óc chó",note:"Olive kỵ bò",changed:true},
+      15:{food:"Tôm 20g + Bầu 20g",ratio:"1:5",tl:"170ml",tc:"Táo hấp",boc:"Cà rốt hấp",fat:"5ml Dầu óc chó"},
+      16:{food:"Cá lóc 20g + Khoai lang",ratio:"1:5",tl:"170ml",tc:"Đu đủ",boc:"Khoai lang hấp",fat:"2,5ml mỡ heo + 2,5ml dầu"},
+      17:{food:"Thịt heo 20g + Bông cải xanh",ratio:"1:5",tl:"170ml",tc:"Thanh long",boc:"Khoai lang hấp",fat:"5ml Dầu olive"},
+      18:{food:"Cá diêu hồng 25g + Bí đỏ",ratio:"1:5",tl:"170ml",tc:"Dưa lưới",fat:"5ml Dầu óc chó"},
+      19:{food:"Bò 25g + Củ cải trắng",ratio:"1:5",tl:"180ml",tc:"Chuối",fat:"5ml Dầu óc chó",note:"Cá hồi kỵ bò",changed:true},
+      20:{food:"Đậu hũ 25g + Cà rốt 25g",ratio:"1:5",tl:"180ml",tc:"Lê",boc:"Cà rốt hấp",fat:"2,5ml mỡ heo + 2,5ml dầu"},
+      21:{food:"Gà 25g + Hạt sen 10g",ratio:"1:5",tl:"180ml",tc:"Chuối",fat:"5ml Dầu óc chó"},
+      22:{food:"Cá basa 25g + Rau ngót",ratio:"1:5",tl:"180ml",tc:"Táo hấp",fat:"5ml Dầu cá hồi"},
+      23:{food:"Cua 25g + Bí xanh 25g",ratio:"1:5",tl:"180ml",tc:"Đu đủ",fat:"2,5ml mỡ gà + 2,5ml dầu"},
+      24:{food:"Gà 25g + Cải bó xôi",ratio:"1:5",tl:"180ml",tc:"Thanh long",boc:"Bánh gạo ăn dặm",fat:"5ml Dầu óc chó"},
+      25:{food:"Cá hồi 25g + Khoai tây",ratio:"1:5",tl:"180ml",tc:"Dưa lưới",fat:"5ml Dầu cá hồi"},
+      26:{food:"Gà 25g + Susu 25g",ratio:"1:5",tl:"180ml",tc:"Chuối",fat:"5ml Dầu olive"},
+      27:{food:"Tôm 25g + Bí đỏ 25g",ratio:"1:5",tl:"180ml",tc:"Lê",fat:"2,5ml mỡ heo + 2,5ml dầu",note:"Mỡ gà kỵ tôm",changed:true},
+      28:{food:"Thịt heo 25g + Mồng tơi",ratio:"1:5",tl:"180ml",tc:"Táo hấp",boc:"Bánh gạo ăn dặm",fat:"5ml Dầu cá hồi"},
+      29:{food:"Trứng 1 trái + Cà chua",ratio:"1:5",tl:"180ml",tc:"Táo hấp",fat:"5ml Dầu olive"},
+      30:{food:"Tôm 25g + Mồng tơi 25g",ratio:"1:5",tl:"180ml",tc:"Lê",boc:"Bí đỏ hấp",fat:"2,5ml mỡ heo + 2,5ml dầu"},
+      31:{food:"Cá diêu hồng 25g + Cải ngọt",ratio:"1:5",tl:"170ml",tc:"Chuối",boc:"Bông cải xanh hấp",fat:"5ml Dầu cá hồi"}
+    }
+  },
+  t11: {
+    label:"THÁNG 11 · THỰC ĐƠN ĂN DẶM 8,5-9 THÁNG", sub:"Cháo 1:5 → cơm nát 1:3 · dầu 5ml · 6 ngày đã chỉnh · 2 bữa chính/ngày", firstDow:0, numDays:30,
+    meals2:{time1:"10:30",time2:"15:00",portion:"25g"},
+    days:{
+      1:{food:"Heo 25g + Bí đỏ 25g",ratio:"1:5",tl:"180ml",tc:"Táo",boc:"Bí đỏ hấp",fat:"2,5ml mỡ gà + 2,5ml dầu"},
+      2:{food:"Cá lóc 25g + Rau ngót",ratio:"1:5",tl:"180ml",tc:"Chuối",boc:"Khoai lang",fat:"5ml Dầu óc chó"},
+      3:{food:"Gà 25g + Măng tây 25g",ratio:"1:5",tl:"180ml",tc:"Lê",boc:"Cà rốt hấp",fat:"5ml Dầu cá hồi"},
+      4:{food:"Bò 25g + Cải bó xôi",ratio:"1:5",tl:"180ml",tc:"Lê",boc:"Bông cải xanh",fat:"2,5ml mỡ heo + 2,5ml dầu óc chó",note:"Có bò → dầu là óc chó",changed:true},
+      5:{food:"Cá basa 25g + Bí xanh",ratio:"1:5",tl:"180ml",tc:"Đu đủ",boc:"Bí ngòi hấp",fat:"5ml Dầu óc chó"},
+      6:{food:"Tôm 25g + Susu 25g",ratio:"1:5",tl:"180ml",tc:"Bơ",boc:"Đậu hũ non",fat:"5ml Dầu cá hồi"},
+      7:{food:"Trứng + Cà chua 25g",ratio:"1:5",tl:"180ml",tc:"Xoài",boc:"Bánh gạo ăn dặm",fat:"2,5ml mỡ gà + 2,5ml dầu"},
+      8:{food:"Cá hồi 25g + Khoai tây",ratio:"1:4",tl:"190ml",tc:"Dưa lưới",boc:"Khoai tây hấp",fat:"2,5ml mỡ gà + 2,5ml dầu",note:"Mỡ heo kỵ cá biển",changed:true},
+      9:{food:"Heo 25g + Cải ngọt 25g",ratio:"1:4",tl:"190ml",tc:"Chuối",boc:"Bơ cắt thanh",fat:"5ml Dầu cá hồi"},
+      10:{food:"Cua 25g + Bí đỏ 25g",ratio:"1:4",tl:"190ml",tc:"Lê",boc:"Bí đỏ hấp",fat:"5ml Dầu olive"},
+      11:{food:"Bò 25g + Rau dền 25g",ratio:"1:4",tl:"190ml",tc:"Táo",boc:"Cà rốt hấp",fat:"2,5ml mỡ gà + 2,5ml dầu óc chó",note:"Có bò → dầu là óc chó",changed:true},
+      12:{food:"Cá diêu hồng 25g + Bầu",ratio:"1:4",tl:"190ml",tc:"Thanh long",boc:"Bông cải",fat:"5ml Dầu cá hồi"},
+      13:{food:"Gà 25g + Bí ngòi 25g",ratio:"1:4",tl:"190ml",tc:"Đu đủ",boc:"Khoai lang",fat:"5ml Dầu olive"},
+      14:{food:"Đậu hũ 25g + Nấm hương",ratio:"1:4",tl:"190ml",tc:"Bơ",boc:"Đậu que hấp mềm",fat:"2,5ml mỡ heo + 2,5ml dầu"},
+      15:{food:"Tôm 30g + Cải bó xôi",ratio:"Nguyên hạt",tl:"200ml",tc:"Chuối",boc:"Bí ngòi hấp",fat:"2,5ml mỡ heo + 2,5ml dầu",note:"Mỡ gà kỵ tôm và rau cải",changed:true},
+      16:{food:"Cá lóc 30g + Mồng tơi",ratio:"Nguyên hạt",tl:"200ml",tc:"Táo",boc:"Bí ngòi hấp",fat:"5ml Dầu olive"},
+      17:{food:"Bò 30g + Súp lơ xanh",ratio:"Nguyên hạt",tl:"200ml",tc:"Dưa lưới",boc:"Khoai lang",fat:"5ml Dầu óc chó"},
+      18:{food:"Heo 30g + Cà rốt 30g",ratio:"Nguyên hạt",tl:"200ml",tc:"Lê",boc:"Cà rốt hấp",fat:"2,5ml mỡ heo + 2,5ml dầu"},
+      19:{food:"Cá hồi 30g + Bí đỏ",ratio:"Nguyên hạt",tl:"200ml",tc:"Bơ",boc:"Đậu hũ",fat:"5ml Dầu olive"},
+      20:{food:"Gà 30g + Bắp cải 30g",ratio:"Nguyên hạt",tl:"200ml",tc:"Thanh Long",boc:"Đậu hũ",fat:"5ml Dầu óc chó"},
+      21:{food:"Trứng + Rau chân vịt",ratio:"Nguyên hạt",tl:"200ml",tc:"Đu đủ",boc:"Bánh gạo ăn dặm",fat:"2,5ml mỡ gà + 2,5ml dầu"},
+      22:{food:"Heo 30g + Cải ngọt 30g",ratio:"Cơm nát 1:3",tl:"210ml",tc:"Táo",boc:"Cơm nắm nhỏ mềm",fat:"2,5ml mỡ heo + 2,5ml dầu"},
+      23:{food:"Cá basa 30g + Bí đỏ",ratio:"Cơm nát 1:3",tl:"210ml",tc:"Chuối",boc:"Bí đỏ",fat:"5ml Dầu óc chó"},
+      24:{food:"Bò 30g + Susu 30g",ratio:"Cơm nát 1:3",tl:"210ml",tc:"Lê",boc:"Khoai lang",fat:"5ml Dầu óc chó",note:"Cá hồi kỵ bò",changed:true},
+      25:{food:"Tôm 30g + Rau dền 30g",ratio:"Cơm nát 1:3",tl:"210ml",tc:"Thanh long",boc:"Bông cải",fat:"2,5ml mỡ heo + 2,5ml dầu",note:"Mỡ gà kỵ tôm",changed:true},
+      26:{food:"Cá hồi 30g + Bông cải",ratio:"Cơm nát 1:3",tl:"220ml",tc:"Bơ",boc:"Đậu hũ",fat:"5ml Dầu óc chó"},
+      27:{food:"Gà 30g + Bí ngòi 30g",ratio:"Cơm nát 1:3",tl:"220ml",tc:"Dưa lưới",boc:"Bí ngòi",fat:"5ml Dầu cá hồi"},
+      28:{food:"Trứng + Cà chua 30g",ratio:"Cơm nát 1:3",tl:"220ml",tc:"Xoài",boc:"Bánh mì mềm",fat:"2,5ml mỡ heo + 2,5ml dầu"},
+      29:{food:"Heo 30g + Bí đỏ 30g",ratio:"Cơm nát 1:3",tl:"220ml",tc:"Táo",boc:"Khoai lang",fat:"2,5ml mỡ gà + 2,5ml dầu"},
+      30:{food:"Cá lóc 30g + Rau ngót",ratio:"Cơm nát 1:3",tl:"220ml",tc:"Chuối",boc:"Bông cải xanh",fat:"5ml Dầu cá hồi"}
+    }
+  },
+  t12: {
+    label:"THÁNG 12 · THỰC ĐƠN ĂN DẶM 9,5-10 THÁNG", sub:"Cơm nát → cơm mềm · dầu 5ml · lịch dầu/mỡ đề xuất · 3 bữa chính/ngày", firstDow:2, numDays:31,
+    meals2:{time1:"10:00",time2:"15:30",time3:"19:00",portion:"30g"},
+    days:{
+      1:{food:"Gà 30g + Măng tây 30g",ratio:"Cơm nát 1:3",tl:"220ml",tc:"Lê",boc:"Cà rốt hấp",fat:"5ml Dầu óc chó"},
+      2:{food:"Bò 30g + Cải bó xôi",ratio:"Cơm nát 1:3",tl:"220ml",tc:"Thanh long",boc:"Bí đỏ",fat:"2,5ml mỡ heo + 2,5ml dầu óc chó",note:"Có bò + rau cải",changed:true},
+      3:{food:"Cá basa 30g + Bí xanh",ratio:"Cơm nát 1:3",tl:"220ml",tc:"Đu đủ",boc:"Bí ngòi",fat:"5ml Dầu cá hồi"},
+      4:{food:"Tôm 30g + Susu 30g",ratio:"Cơm nát 1:3",tl:"220ml",tc:"Bơ",boc:"Đậu hũ non",fat:"5ml Dầu olive"},
+      5:{food:"Trứng + Cà chua 30g",ratio:"Cơm nát 1:3",tl:"220ml",tc:"Dưa lưới",boc:"Bánh gạo",fat:"2,5ml mỡ gà + 2,5ml dầu olive"},
+      6:{food:"Cá hồi 30g + Khoai tây",ratio:"Cơm mềm",tl:"220ml",tc:"Kiwi chín",boc:"Khoai tây",fat:"5ml Dầu óc chó"},
+      7:{food:"Heo 30g + Cải ngọt 30g",ratio:"Cơm mềm",tl:"220ml",tc:"Chuối chín",boc:"Bơ cắt thanh",fat:"2,5ml mỡ heo + 2,5ml dầu olive",note:"Rau cải né mỡ gà",changed:true},
+      8:{food:"Cua 30g + Bí đỏ 30g",ratio:"Cơm mềm",tl:"220ml",tc:"Lê",boc:"Bí đỏ",fat:"5ml Dầu cá hồi"},
+      9:{food:"Bò 30g + Rau dền 30g",ratio:"Cơm mềm",tl:"220ml",tc:"Táo",boc:"Cà rốt",fat:"2,5ml mỡ gà + 2,5ml dầu óc chó",note:"Có bò → dầu óc chó",changed:true},
+      10:{food:"Cá diêu hồng 30g + Bầu",ratio:"Cơm mềm",tl:"220ml",tc:"Thanh Long",boc:"Bông cải",fat:"5ml Dầu olive"},
+      11:{food:"Gà 30g + Bí ngòi 30g",ratio:"Cơm mềm",tl:"220ml",tc:"Đu đủ",boc:"Khoai lang",fat:"5ml Dầu cá hồi"},
+      12:{food:"Đậu hũ 30g + Nấm hương",ratio:"Cơm mềm",tl:"220ml",tc:"Xoài",boc:"Nui luộc mềm",fat:"2,5ml mỡ heo + 2,5ml dầu óc chó"},
+      13:{food:"Tôm 30g + Cải bó xôi",ratio:"Cơm mềm",tl:"230ml",tc:"Chuối",boc:"Bí ngòi",fat:"5ml Dầu olive"},
+      14:{food:"Cá lóc 30g + Mồng tơi",ratio:"Cơm mềm",tl:"230ml",tc:"Táo",boc:"Khoai lang",fat:"2,5ml mỡ gà + 2,5ml dầu cá hồi"},
+      15:{food:"Bò 30g + Súp lơ xanh",ratio:"Cơm mềm",tl:"230ml",tc:"Dưa lưới",boc:"Cà rốt hấp",fat:"5ml Dầu óc chó"},
+      16:{food:"Heo 30g + Cà rốt 30g",ratio:"Cơm mềm",tl:"230ml",tc:"Lê",boc:"Cà rốt",fat:"5ml Dầu olive"},
+      17:{food:"Cá hồi 30g + Bí đỏ",ratio:"Cơm mềm",tl:"230ml",tc:"Bơ",boc:"Đậu hũ",fat:"2,5ml mỡ gà + 2,5ml dầu óc chó",note:"Cá biển né mỡ heo",changed:true},
+      18:{food:"Gà 30g + Bắp cải 30g",ratio:"Cơm mềm",tl:"230ml",tc:"Thanh Long",boc:"Bông cải",fat:"5ml Dầu cá hồi"},
+      19:{food:"Trứng 30g + Rau chân vịt",ratio:"Cơm mềm",tl:"230ml",tc:"Đu đủ",boc:"Trứng cuộn cắt thanh",fat:"2,5ml mỡ heo + 2,5ml dầu olive"},
+      20:{food:"Bò 30g + Cải ngọt 30g",ratio:"Cơm mềm",tl:"240ml",tc:"Táo",boc:"Cơm nắm nhỏ",fat:"5ml Dầu óc chó"},
+      21:{food:"Heo 30g + Cải thìa 30g",ratio:"Cơm mềm",tl:"240ml",tc:"Chuối chín",boc:"Bơ cắt thanh",fat:"2,5ml mỡ heo + 2,5ml dầu cá hồi",note:"Rau cải né mỡ gà",changed:true},
+      22:{food:"Ức gà 30g + Đậu hà lan",ratio:"Cơm mềm",tl:"240ml",tc:"Việt quất cắt nhỏ",boc:"Đậu hà lan",fat:"5ml Dầu olive"},
+      23:{food:"Tôm 30g + Mướp hương",ratio:"Cơm mềm",tl:"240ml",tc:"Lê chín",boc:"Bánh gạo",fat:"2,5ml mỡ heo + 2,5ml dầu óc chó",note:"Tôm né mỡ gà",changed:true},
+      24:{food:"Bò 30g + Bí ngòi 30g",ratio:"Cơm mềm",tl:"240ml",tc:"Bơ",boc:"Bánh gạo",fat:"5ml Dầu óc chó"},
+      27:{food:"Cá thu 30g + Bí đỏ",ratio:"Cơm mềm",tl:"240ml",tc:"Kiwi chín",boc:"Bí đỏ",fat:"2,5ml mỡ gà + 2,5ml dầu olive",note:"Cá biển né mỡ heo",changed:true},
+      28:{food:"Heo 30g + Đậu hà lan",ratio:"Cơm mềm",tl:"240ml",tc:"Nho cắt nhỏ",boc:"Khoai lang hấp",fat:"5ml Dầu cá hồi"}
+    }
+  }
+};
+
+const mealPool = [
+  {p:"Gà",v:"Bí xanh"},
+  {p:"Cá basa",v:"Cải ngọt"},
+  {p:"Heo",v:"Susu"},
+  {p:"Cá lóc",v:"Cà rốt"},
+  {p:"Đậu hũ",v:"Bí đỏ"},
+  {p:"Trứng",v:"Rau ngót"},
+  {p:"Cua",v:"Khoai lang"},
+  {p:"Cá diêu hồng",v:"Mồng tơi"},
+  {p:"Gà",v:"Bông cải xanh"},
+  {p:"Tôm",v:"Bầu"},
+  {p:"Heo",v:"Rau dền"},
+  {p:"Cá basa",v:"Susu"},
+  {p:"Đậu hũ",v:"Nấm hương"},
+  {p:"Cá lóc",v:"Bí xanh"}
+];
+const dauCycle = ["Dầu olive","Dầu óc chó","Dầu cá hồi"];
+function safeFat(protein, idx, amount){
+  if(protein==="Bò") return amount+" Dầu óc chó";
+  let d = dauCycle[idx % 3];
+  if(protein==="Cá hồi" && d==="Dầu cá hồi") d = dauCycle[(idx+1)%3];
+  return amount+" "+d;
+}
+function firstProteinWord(foodStr){
+  return (foodStr||"").split("+")[0].split(/\d/)[0].trim();
+}
+function extraMeal(day, offset, portion, avoidProtein){
+  let idx = (day + offset) % mealPool.length;
+  let combo = mealPool[idx];
+  if(avoidProtein && combo.p===avoidProtein){
+    idx = (idx+1) % mealPool.length;
+    combo = mealPool[idx];
+  }
+  const fatAmount = portion==="30g" ? "5ml" : (portion==="25g" ? "5ml" : "5ml");
+  return {
+    food: combo.p+" "+portion+" + "+combo.v+" "+portion,
+    fat: safeFat(combo.p, day+offset, fatAmount)
+  };
+}
+function renderCalendar(key, def){
+  const el = document.getElementById(key);
+  let html = `<div class="card" style="padding:0;overflow:hidden;">
+    <div class="cal-title">${def.label}<span>${def.sub}</span></div>
+    <div style="padding:10px 12px 0;">
+      <div class="legend"><span><i class="dot g"></i>Giữ nguyên</span><span><i class="dot c"></i>Đã chỉnh theo nguyên tắc kỵ</span></div>
+    </div>
+    <div class="cal-wrap"><div class="cal-grid">`;
+  DOW.forEach(d=>{ html += `<div class="cal-head">${d}</div>`; });
+  for(let i=0;i<def.firstDow;i++){ html += `<div class="cal-cell empty"></div>`; }
+  for(let day=1; day<=def.numDays; day++){
+    const info = def.days[day];
+    if(!info){ html += `<div class="cal-cell"><div class="dnum">${day}</div></div>`; continue; }
+    let extras = [];
+    if(info.tl) extras.push("TL:"+info.tl);
+    if(info.tc) extras.push("Tc:"+info.tc);
+    if(info.boc) extras.push("Bốc:"+info.boc);
+    let mealsHtml = "";
+    if(def.meals2){
+      const mainProtein = firstProteinWord(info.food);
+      mealsHtml += `<div class="meal-lbl">🥣 ${def.meals2.time1} · Bữa 1</div>
+        <div class="cfood">${info.food}</div>
+        ${extras.length?`<div class="cmeta">${extras.join(' · ')}</div>`:''}
+        <div class="cfat">${info.fat}</div>
+        ${info.note?`<div class="cnote">↳ ${info.note}</div>`:''}`;
+      const m2 = extraMeal(day, 3, def.meals2.portion, mainProtein);
+      mealsHtml += `<div class="meal-sep"></div><div class="meal-lbl">🥣 ${def.meals2.time2} · Bữa 2</div>
+        <div class="cfood">${m2.food}</div>
+        <div class="cfat">${m2.fat}</div>`;
+      if(def.meals2.time3){
+        const m3 = extraMeal(day, 8, def.meals2.portion, firstProteinWord(m2.food));
+        mealsHtml += `<div class="meal-sep"></div><div class="meal-lbl">🥣 ${def.meals2.time3} · Bữa tối</div>
+          <div class="cfood">${m3.food}</div>
+          <div class="cfat">${m3.fat}</div>`;
+      }
+    } else {
+      mealsHtml = `<div class="cfood">${info.food}</div>
+        ${extras.length?`<div class="cmeta">${extras.join(' · ')}</div>`:''}
+        <div class="cfat">${info.fat}</div>
+        ${info.note?`<div class="cnote">↳ ${info.note}</div>`:''}`;
+    }
+    html += `<div class="cal-cell ${info.changed?'changed':''} ${def.meals2?'multi':''}">
+      <div class="dnum">${day}${info.ratio?`<span class="cratio">${info.ratio}</span>`:''}</div>
+      ${mealsHtml}
+    </div>`;
+  }
+  const totalCells = def.firstDow + def.numDays;
+  const remainder = totalCells % 7;
+  if(remainder!==0){ for(let i=0;i<7-remainder;i++){ html += `<div class="cal-cell empty"></div>`; } }
+  html += `</div></div><p class="cal-hint">Vuốt ngang trong khung để xem đủ 7 ngày trong tuần.</p></div>`;
+  el.innerHTML = html;
+}
+Object.keys(monthDefs).forEach(k=>renderCalendar(k, monthDefs[k]));
+
+document.querySelectorAll('nav.tabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.t).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+</script>
+</body>
+</html>
