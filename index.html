@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ăn Dặm Cùng Con</title>
+<title>Ăn Dặm Cùng Bơ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Nunito:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -17,13 +17,51 @@
   *{box-sizing:border-box;}
   body{margin:0;background:var(--cream);color:var(--ink);font-family:'Nunito',sans-serif;-webkit-font-smoothing:antialiased;padding-bottom:60px;}
   h1,h2,h3,.brand{font-family:'Baloo 2',cursive;}
-  header{background:linear-gradient(180deg,var(--sage) 0%, var(--cream) 100%);padding:24px 16px 16px;text-align:center;border-bottom:2px dashed var(--sage-dark);}
-  header h1{margin:0 0 4px;font-size:23px;color:var(--leaf);}
+  header{background:linear-gradient(180deg,var(--sage) 0%, var(--cream) 100%);padding:22px 16px 14px;text-align:center;border-bottom:2px dashed var(--sage-dark);position:relative;overflow:hidden;}
+  header h1{margin:0 0 4px;font-size:24px;color:var(--leaf);display:flex;align-items:center;justify-content:center;gap:8px;}
   header p{margin:0;color:var(--ink-soft);font-size:13px;}
-  .container{max-width:980px;margin:0 auto;padding:0 12px;}
-  nav.tabs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;padding:14px 0 6px;position:sticky;top:0;background:var(--cream);z-index:10;}
+  .deco-row{display:flex;justify-content:center;gap:18px;margin-top:10px;opacity:.9;}
+  .deco-row svg{width:38px;height:38px;}
+  .container{max-width:980px;margin:0 auto;padding:0 12px;position:relative;}
+
+  /* ===== NAV ===== */
+  .navbar{position:sticky;top:0;z-index:20;background:var(--cream);padding:10px 0 8px;border-bottom:1px solid var(--line);}
+  .navbar-row{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .hamburger{display:none;background:var(--sage-dark);color:#fff;border:none;border-radius:10px;width:38px;height:38px;font-size:18px;cursor:pointer;flex:0 0 auto;}
+  nav.tabs{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;flex:1;position:relative;}
   nav.tabs button{font-family:'Nunito',sans-serif;font-weight:700;font-size:12.5px;padding:7px 12px;border-radius:999px;border:1.5px solid var(--sage-dark);background:var(--card);color:var(--leaf);cursor:pointer;}
   nav.tabs button.active{background:var(--sage-dark);color:#fff;border-color:var(--sage-dark);}
+  nav.tabs button.month-toggle{background:var(--peach);border-color:var(--peach-dark);color:var(--peach-dark);}
+  nav.tabs button.month-toggle.active{background:var(--peach-dark);color:#fff;}
+
+  /* ===== LỊCH ĂN 2-COLUMN LAYOUT ===== */
+  .lichan-layout{display:flex;gap:16px;align-items:flex-start;}
+  .month-sidebar{display:flex;flex-direction:column;gap:6px;flex:0 0 168px;position:sticky;top:70px;}
+  .month-sidebar button{
+    font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;text-align:left;
+    padding:10px 12px;border-radius:12px;border:1.5px solid var(--line);
+    background:var(--card);color:var(--leaf);cursor:pointer;
+  }
+  .month-sidebar button.active{background:var(--peach-dark);color:#fff;border-color:var(--peach-dark);}
+  .month-content{flex:1;min-width:0;}
+  .mpanel{display:none;}
+  .mpanel.active{display:block;}
+  @media (max-width:700px){
+    .lichan-layout{flex-direction:column;}
+    .month-sidebar{flex-direction:row;flex-wrap:wrap;position:static;flex:0 0 auto;width:100%;}
+    .month-sidebar button{flex:1 1 auto;text-align:center;font-size:12px;padding:8px 6px;}
+  }
+
+  @media (max-width:640px){
+    .hamburger{display:block;}
+    nav.tabs{display:none;flex-direction:column;align-items:stretch;position:absolute;top:46px;left:0;right:0;
+      background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:10px;z-index:30;
+      box-shadow:0 8px 20px rgba(0,0,0,.08);}
+    nav.tabs.open{display:flex;}
+    nav.tabs button{width:100%;text-align:left;}
+    .month-submenu{margin:4px 0 0;max-width:none;}
+  }
+
   .panel{display:none;padding:16px 0 30px;}
   .panel.active{display:block;}
   .card{background:var(--card);border:1.5px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;}
@@ -71,29 +109,65 @@
   .cal-cell .meal-lbl{font-size:9px;color:var(--pink-dark);font-weight:700;margin-top:2px;}
   .cal-cell .meal-sep{border-top:1px dashed var(--line);margin:6px 0 2px;}
   .foot{text-align:center;font-size:12px;color:var(--ink-soft);padding:20px 20px 0;}
+  .corner-deco{position:absolute;opacity:.5;pointer-events:none;}
+  .corner-deco.tl{top:8px;left:8px;width:44px;}
+  .corner-deco.tr{top:8px;right:8px;width:44px;}
+  .section-illus{display:flex;justify-content:center;margin:6px 0 12px;opacity:.85;}
+  .section-illus svg{width:64px;height:64px;}
 </style>
 </head>
 <body>
 
 <header>
-  <h1 class="brand">🍼 Ăn Dặm Cùng Con</h1>
+  <svg class="corner-deco tl" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="30" cy="30" r="26" fill="#F3D6DD"/>
+    <circle cx="30" cy="30" r="17" fill="#FBF6EC"/>
+    <circle cx="24" cy="26" r="3" fill="#3F5C38"/>
+    <circle cx="36" cy="26" r="3" fill="#3F5C38"/>
+    <path d="M22 36 Q30 42 38 36" stroke="#B05A2E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </svg>
+  <svg class="corner-deco tr" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+    <path d="M30 8 C42 8 48 22 48 32 C48 46 40 54 30 54 C20 54 12 46 12 32 C12 22 18 8 30 8 Z" fill="#5B7A52"/>
+    <path d="M30 14 C40 14 44 24 44 32 C44 44 37 50 30 50 C23 50 16 44 16 32 C16 24 20 14 30 14 Z" fill="#E7EFDD"/>
+    <ellipse cx="30" cy="34" rx="8" ry="9" fill="#B05A2E"/>
+  </svg>
+  <h1 class="brand">🥑 Ăn Dặm Cùng Bơ</h1>
   <p>Lịch dạng bảng như file gốc — vuốt ngang để xem đủ 7 ngày, đã gộp dầu/mỡ chỉnh sửa</p>
+  <div class="deco-row">
+    <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" title="bình sữa">
+      <rect x="22" y="6" width="16" height="8" rx="3" fill="#B05A2E"/>
+      <rect x="25" y="2" width="10" height="6" rx="2" fill="#F6B896"/>
+      <rect x="16" y="14" width="28" height="34" rx="10" fill="#E7EFF7" stroke="#4472A8" stroke-width="1.5"/>
+      <rect x="16" y="28" width="28" height="14" fill="#FBF6EC" stroke="#4472A8" stroke-width="1"/>
+    </svg>
+    <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" title="ty giả">
+      <circle cx="30" cy="24" r="14" fill="#F3D6DD" stroke="#A6486A" stroke-width="1.5"/>
+      <circle cx="30" cy="24" r="6" fill="#FBF6EC"/>
+      <rect x="26" y="36" width="8" height="10" rx="4" fill="#F6B896"/>
+      <circle cx="30" cy="50" r="7" fill="none" stroke="#B05A2E" stroke-width="3"/>
+    </svg>
+    <svg viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg" title="yếm bé">
+      <path d="M30 10 C40 10 46 18 46 28 L46 46 C46 50 42 52 38 52 L22 52 C18 52 14 50 14 46 L14 28 C14 18 20 10 30 10 Z" fill="#F6B896"/>
+      <circle cx="30" cy="26" r="6" fill="#FBF6EC"/>
+    </svg>
+  </div>
 </header>
 
 <div class="container">
-  <nav class="tabs" id="tabs">
-    <button data-t="tongquan" class="active">Tổng quan</button>
-    <button data-t="thoigian">Thời gian biểu</button>
-    <button data-t="tangtho">Tăng thô theo tuần</button>
-    <button data-t="daumo">Dầu & Mỡ</button>
-    <button data-t="baoquan">Bảo quản đông</button>
-    <button data-t="luuy">Lưu ý thêm</button>
-    <button data-t="t8">T8</button>
-    <button data-t="t9">T9</button>
-    <button data-t="t10">T10</button>
-    <button data-t="t11">T11</button>
-    <button data-t="t12">T12</button>
-  </nav>
+  <div class="navbar">
+    <div class="navbar-row">
+      <button class="hamburger" id="hamburger">☰</button>
+      <nav class="tabs" id="tabs">
+        <button data-t="tongquan" class="active">Tổng quan</button>
+        <button data-t="lichan">🍽️ Lịch ăn</button>
+        <button data-t="thoigian">Thời gian biểu</button>
+        <button data-t="tangtho">Tăng thô theo tuần</button>
+        <button data-t="daumo">Dầu & Mỡ</button>
+        <button data-t="baoquan">Bảo quản đông</button>
+        <button data-t="luuy">Lưu ý thêm</button>
+      </nav>
+    </div>
+  </div>
 
   <div class="panel active" id="tongquan">
     <div class="card">
@@ -232,6 +306,39 @@
       <div class="week"><div class="wk-title">Cả giai đoạn</div><div class="wk-ratio">Cơm nát → cơm mềm</div><p>Bé ăn gần giống gia đình (không nêm mặn).</p></div>
     </div>
     <div class="card">
+      <h2>Khi nào bắt đầu chiên/xào cho bé?</h2>
+      <table class="mini">
+        <tr><th>Giai đoạn</th><th>Cách nấu</th></tr>
+        <tr><td>6-9 tháng</td><td>Chỉ hấp/luộc/hầm — chưa xào, chưa chiên</td></tr>
+        <tr><td>10-12 tháng</td><td>Có thể xào nhẹ, không gia vị, không phi hành/tỏi</td></tr>
+        <tr><td>18-24 tháng+</td><td>Mới nên cho chiên/rán ngập dầu (hạn chế vẫn tốt hơn)</td></tr>
+      </table>
+      <p><b>Vì sao nên đợi:</b> hệ tiêu hóa bé dưới 10 tháng chưa xử lý tốt dầu mỡ ở nhiệt độ cao và kết cấu dai/giòn do xào tạo ra; xào thường đi kèm hành/tỏi phi thơm — cần tránh vì gia vị mạnh chưa phù hợp (tỏi cũng nằm trong danh sách kỵ mỡ gà); giai đoạn này nên giữ nguyên tắc không nêm mặn, ít dầu mỡ để bảo vệ thận còn non.</p>
+      <p><b>Khi xào từ 10 tháng, lưu ý:</b></p>
+      <ul>
+        <li>Chỉ xào với lượng dầu ăn dặm đang tính hàng ngày (olive, mè...), không thêm dầu riêng để chiên xào.</li>
+        <li>Không phi hành/tỏi tạo mùi thơm kiểu người lớn — muốn thơm chỉ cần đảo nhẹ với dầu ăn dặm sẵn có.</li>
+        <li>Vẫn không nêm muối/nước mắm/hạt nêm đến hết 12 tháng, dù đã xào.</li>
+        <li>Lửa vừa, xào nhanh chín tới, không để cháy cạnh/giòn cứng — thức ăn vẫn cần mềm dễ nhai ở tuổi này.</li>
+      </ul>
+      <h3>Dầu nào dùng để xào được, dầu nào không?</h3>
+      <table class="mini">
+        <tr><th>Nhóm</th><th>Loại dầu</th><th>Lý do</th></tr>
+        <tr><td><b>Dùng xào được</b></td><td>Olive, Mè, Gấc</td><td>Chịu nhiệt khá tốt, ít biến chất khi gặp nhiệt độ cao, vẫn giữ được phần dinh dưỡng</td></tr>
+        <tr><td><b>Không nên xào</b></td><td>Óc chó, Cá hồi, Hạt lanh, Sachi</td><td>Giàu omega-3, chất béo chưa bão hòa dễ biến chất/mất chất ở nhiệt độ cao, thậm chí sinh mùi khó chịu — chỉ nên cho vào <b>sau khi tắt bếp</b></td></tr>
+      </table>
+      <p style="color:var(--ink-soft);font-size:12.5px;">Cách dùng hợp lý: xào rau củ/thịt bằng dầu olive, mè hoặc gấc (chọn 1 trong 3 tùy ngày theo lịch dầu/mỡ), sau đó nếu muốn đa dạng dưỡng chất, có thể thêm 1 chút dầu óc chó/cá hồi/hạt lanh/sachi rưới lên sau khi tắt bếp — tương tự cách mẹ đang làm với cháo hiện tại.</p>
+      <h3>Cách chiên/xào từng bước</h3>
+      <ol style="padding-left:20px;margin:0 0 8px;">
+        <li style="margin-bottom:8px;"><b>Chuẩn bị nguyên liệu:</b> Rửa sạch, để ráo nước hẳn. Cắt theo đúng độ thô hiện tại của bé, thịt/cá thái mỏng đều để chín nhanh.</li>
+        <li style="margin-bottom:8px;"><b>Làm nóng chảo với ít dầu:</b> Chảo chống dính, lửa vừa-nhỏ. Chọn <b>dầu olive, mè hoặc gấc</b> (chịu nhiệt tốt) theo đúng lượng dầu ăn dặm của bữa đó — không thêm dầu riêng. Đợi dầu nóng già rồi mới cho nguyên liệu vào.</li>
+        <li style="margin-bottom:8px;"><b>Xào phần lâu chín trước:</b> Thịt/cá hoặc rau củ cứng vào trước, đảo đều liên tục, không để cháy cạnh. Lửa nhỏ, chín từ từ — không xào nhanh giòn kiểu người lớn.</li>
+        <li style="margin-bottom:8px;"><b>Thêm phần nhanh chín sau:</b> Rau lá mềm (rau ngót, cải bó xôi, mồng tơi...) cho vào sau cùng, tránh xào quá lâu làm mất chất và mất kết cấu cần cho bé tập nhai.</li>
+        <li style="margin-bottom:8px;"><b>Không nêm, có thể thêm dashi:</b> Không muối/nước mắm/hạt nêm. Muốn đậm đà hơn thì thêm 1-2 muỗng nước dashi rau củ đã trữ đông vào cuối, đảo nhanh rồi tắt bếp.</li>
+        <li><b>Kiểm tra chín kỹ:</b> Thịt/cá phải chín hoàn toàn, không còn hồng/trong. Cắt/băm nhỏ thêm nếu miếng còn to trước khi trộn vào cháo/cơm hoặc cho bé ăn kèm riêng.</li>
+      </ol>
+    </div>
+    <div class="card">
       <h2>3 điều nên bổ sung thêm</h2>
       <h3>1. Linh hoạt theo phản ứng của bé</h3>
       <p>Nếu bé còn nôn ói với hạt to hơn dự kiến, lùi lại tỉ lệ cũ vài ngày thay vì ép đúng lịch tuần.</p>
@@ -330,11 +437,28 @@
     </div>
   </div>
 
-  <div class="panel" id="t8"></div>
-  <div class="panel" id="t9"></div>
-  <div class="panel" id="t10"></div>
-  <div class="panel" id="t11"></div>
-  <div class="panel" id="t12"></div>
+  <div class="panel" id="lichan">
+    <div class="lichan-layout">
+      <nav class="month-sidebar" id="monthSidebar">
+        <button data-mt="t8" class="active">🍽️ Tháng 8/2026</button>
+        <button data-mt="t9">🍽️ Tháng 9/2026</button>
+        <button data-mt="t10">🍽️ Tháng 10/2026</button>
+        <button data-mt="t11">🍽️ Tháng 11/2026</button>
+        <button data-mt="t12">🍽️ Tháng 12/2026</button>
+        <button data-mt="t2701">🍽️ Tháng 1/2027</button>
+        <button data-mt="t2702">🍽️ Tháng 2/2027</button>
+      </nav>
+      <div class="month-content">
+        <div class="mpanel active" id="t8"></div>
+        <div class="mpanel" id="t9"></div>
+        <div class="mpanel" id="t10"></div>
+        <div class="mpanel" id="t11"></div>
+        <div class="mpanel" id="t12"></div>
+        <div class="mpanel" id="t2701"></div>
+        <div class="mpanel" id="t2702"></div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <p class="foot">Bốc = món ăn bốc · Tc = tráng miệng · TL = tổng lượng cháo/cơm mỗi bữa · nền cam = ngày đã chỉnh dầu/mỡ<br>1-14/8: bé chưa ăn dặm · 31/8 và các bữa "Bữa 2/Bữa tối" từ T10 trở đi là do mình đề xuất thêm để nối tiếp mượt file gốc</p>
@@ -549,6 +673,65 @@ function extraMeal(day, offset, portion, avoidProtein){
     fat: safeFat(combo.p, day+offset, fatAmount)
   };
 }
+const latePool = [
+  {p:"Gà",v:"Bí đỏ",tc:"Lê",boc:"Cà rốt hấp"},
+  {p:"Bò",v:"Cải ngọt",tc:"Táo",boc:"Bí đỏ"},
+  {p:"Cá basa",v:"Bí xanh",tc:"Đu đủ",boc:"Bông cải"},
+  {p:"Tôm",v:"Susu",tc:"Chuối",boc:"Đậu hũ"},
+  {p:"Trứng",v:"Cà chua",tc:"Xoài",boc:"Bánh mì mềm"},
+  {p:"Cá hồi",v:"Khoai tây",tc:"Kiwi chín",boc:"Khoai tây"},
+  {p:"Heo",v:"Cải bó xôi",tc:"Dưa lưới",boc:"Cơm nắm nhỏ"},
+  {p:"Cua",v:"Bí đỏ",tc:"Lê",boc:"Bí đỏ"},
+  {p:"Cá diêu hồng",v:"Bầu",tc:"Thanh Long",boc:"Bông cải"},
+  {p:"Cá lóc",v:"Mồng tơi",tc:"Táo",boc:"Khoai lang"},
+  {p:"Ức gà",v:"Đậu hà lan",tc:"Việt quất cắt nhỏ",boc:"Đậu hà lan"},
+  {p:"Đậu hũ",v:"Nấm hương",tc:"Xoài",boc:"Nui luộc mềm"},
+  {p:"Gà",v:"Bắp cải",tc:"Thanh Long",boc:"Bông cải"},
+  {p:"Bò",v:"Súp lơ xanh",tc:"Dưa lưới",boc:"Cà rốt hấp"},
+  {p:"Cá thu",v:"Bí đỏ",tc:"Kiwi chín",boc:"Bí đỏ"},
+  {p:"Heo",v:"Cải thìa",tc:"Chuối chín",boc:"Bơ cắt thanh"},
+  {p:"Tôm",v:"Mướp hương",tc:"Lê chín",boc:"Bánh gạo"},
+  {p:"Trứng",v:"Rau chân vịt",tc:"Đu đủ",boc:"Trứng cuộn"}
+];
+function genLateFat(i, combo){
+  const isBo = combo.p==="Bò";
+  const isCaBien = combo.p==="Cá hồi" || combo.p==="Cá thu";
+  const isTomCai = combo.p==="Tôm" || /Cải/.test(combo.v);
+  const safeGac = !/Bí đỏ|Cà rốt|Đu đủ/.test(combo.v) && !/Đu đủ/.test(combo.tc);
+  const useGac = safeGac && (i % 7 === 3);
+  const dauPick = isBo ? safeFat("Bò", i, "").replace(" ","") : dauCycle[i % dauCycle.length];
+  if(useGac) return {fat:"5ml Dầu gấc", note:"Ngày an toàn không cà rốt/bí đỏ/đu đủ, ~1 lần/tuần"};
+  const moDay = (i % 5) < 2;
+  if(moDay){
+    let mo = isCaBien ? "mỡ gà" : (isTomCai ? "mỡ heo" : (i%2===0?"mỡ gà":"mỡ heo"));
+    let dPart = isBo ? ["Dầu óc chó","Dầu mè","Dầu sachi","Dầu hạt lanh"][i%4] : dauCycle[(i+1)%dauCycle.length];
+    let note = isBo? "Có bò → né olive/cá hồi" : (isCaBien? "Cá biển né mỡ heo" : (isTomCai? "Tôm/rau cải né mỡ gà" : null));
+    return {fat:`2,5ml ${mo} + 2,5ml ${dPart}`, note};
+  }
+  let d = isBo ? ["Dầu óc chó","Dầu mè","Dầu sachi","Dầu hạt lanh"][i%4] : dauCycle[i % dauCycle.length];
+  return {fat:`5ml ${d}`, note: isBo? "Có bò → né olive/cá hồi": null};
+}
+function buildLateMonth(numDays, portion, tlStart, ratioEarly, ratioLate, switchDay){
+  const days = {};
+  for(let i=0;i<numDays;i++){
+    const day = i+1;
+    const combo = latePool[i % latePool.length];
+    const tl = tlStart + Math.floor(i/7)*5;
+    const ratio = (switchDay && day>=switchDay) ? ratioLate : ratioEarly;
+    const fatInfo = genLateFat(i, combo);
+    const xao = (i % 4 === 3);
+    let note = fatInfo.note;
+    if(xao) note = (note? note+" · ":"")+"Có thể xào nhẹ (dầu olive/mè/gấc) thay vì hấp";
+    days[day] = {
+      food: `${combo.p} ${portion} + ${combo.v} ${portion}`,
+      ratio, tl: tl+"ml", tc: combo.tc, boc: combo.boc,
+      fat: fatInfo.fat,
+      note: note||undefined,
+      changed: !!note
+    };
+  }
+  return days;
+}
 function renderCalendar(key, def){
   const el = document.getElementById(key);
   let html = `<div class="card" style="padding:0;overflow:hidden;">
@@ -603,12 +786,45 @@ function renderCalendar(key, def){
 }
 Object.keys(monthDefs).forEach(k=>renderCalendar(k, monthDefs[k]));
 
-document.querySelectorAll('nav.tabs button').forEach(btn=>{
+const t2701Def = {
+  label:"THÁNG 1/2027 · THỰC ĐƠN ĂN DẶM 10,5-11 THÁNG", sub:"Cơm mềm → Cơm gia đình · 35g đạm/bữa · TL 250-270ml · 3 bữa chính/ngày · có thể xào nhẹ",
+  firstDow:5, numDays:31,
+  meals2:{time1:"10:00",time2:"15:30",time3:"19:00",portion:"35g"},
+  days: buildLateMonth(31, "35g", 250, "Cơm mềm", "Cơm gia đình (không nêm mặn)", 15)
+};
+const t2702Def = {
+  label:"THÁNG 2/2027 · THỰC ĐƠN ĂN DẶM 11,5-12 THÁNG", sub:"Cơm gia đình (không nêm mặn) · 40g đạm/bữa · TL 270-285ml · 3 bữa chính/ngày · bé đủ 1 tuổi giữa tháng 🎉",
+  firstDow:1, numDays:28,
+  meals2:{time1:"10:00",time2:"15:30",time3:"19:00",portion:"40g"},
+  days: buildLateMonth(28, "40g", 270, "Cơm gia đình (không nêm mặn)", "Cơm gia đình (không nêm mặn)", 0)
+};
+renderCalendar('t2701', t2701Def);
+renderCalendar('t2702', t2702Def);
+
+// Hamburger toggle (mobile)
+document.getElementById('hamburger').addEventListener('click', ()=>{
+  document.getElementById('tabs').classList.toggle('open');
+});
+
+// Top-level nav (switches between main panels, incl. "lichan")
+document.querySelectorAll('nav.tabs [data-t]').forEach(btn=>{
   btn.addEventListener('click', ()=>{
-    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('nav.tabs [data-t]').forEach(b=>b.classList.remove('active'));
     document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(btn.dataset.t).classList.add('active');
+    document.getElementById('tabs').classList.remove('open');
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+// Month sidebar (inside "Lịch ăn" panel — switches which month calendar shows on the right)
+document.querySelectorAll('#monthSidebar [data-mt]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#monthSidebar [data-mt]').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.mpanel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.mt).classList.add('active');
     window.scrollTo({top:0, behavior:'smooth'});
   });
 });
